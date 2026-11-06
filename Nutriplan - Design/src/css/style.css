@@ -1,0 +1,18 @@
+.loading {
+  display:none
+}
+.col-span-full { grid-column: 1 / -1; }
+.min-w-0 { min-width: 0; }
+.opacity-0 { opacity: 0; }
+.shadow-md { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+.border-emerald-500 { border-color: #10b981; }
+.ring-emerald-500 { --tw-ring-color: #10b981; }
+.bg-amber-100 { background-color: #fef3c7; }
+.bg-rose-100 { background-color: #ffe4e6; }
+.bg-teal-100 { background-color: #ccfbf1; }
+.text-amber-700 { color: #b45309; }
+.text-rose-700 { color: #be123c; }
+.hover\:bg-amber-200:hover { background-color: #fde68a; }
+.hover\:bg-rose-200:hover { background-color: #fecdd3; }
+.hover\:bg-blue-200:hover { background-color: #bfdbfe; }
+.hover\:bg-purple-200:hover { background-color: #e9d5ff; }

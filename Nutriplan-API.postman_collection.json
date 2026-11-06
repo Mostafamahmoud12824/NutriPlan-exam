@@ -1,0 +1,173 @@
+{
+  "info": {
+    "name": "Nutriplan API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://nutriplan-api.vercel.app/api" },
+    { "key": "usdaKey", "value": "DEMO_KEY" }
+  ],
+  "item": [
+    {
+      "name": "Meals",
+      "item": [
+        {
+          "name": "Search meals",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/meals/search?q=chicken",
+              "host": ["{{baseUrl}}"],
+              "path": ["meals", "search"],
+              "query": [{ "key": "q", "value": "chicken" }]
+            }
+          }
+        },
+        {
+          "name": "Filter meals",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/meals/filter?category=Beef&area=Egyptian&limit=25",
+              "host": ["{{baseUrl}}"],
+              "path": ["meals", "filter"],
+              "query": [
+                { "key": "category", "value": "Beef" },
+                { "key": "area", "value": "Egyptian" },
+                { "key": "ingredient", "value": "", "disabled": true },
+                { "key": "limit", "value": "25" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get meal by id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/meals/52772",
+              "host": ["{{baseUrl}}"],
+              "path": ["meals", "52772"]
+            }
+          }
+        },
+        {
+          "name": "Get random meals",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/meals/random?count=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["meals", "random"],
+              "query": [{ "key": "count", "value": "1" }]
+            }
+          }
+        },
+        {
+          "name": "Get all categories",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/meals/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["meals", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Get all areas",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/meals/areas",
+              "host": ["{{baseUrl}}"],
+              "path": ["meals", "areas"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Nutrition",
+      "item": [
+        {
+          "name": "Analyze recipe",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-key", "value": "{{usdaKey}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipeName\": \"Test Recipe\",\n  \"ingredients\": [\"1 cup rice\", \"200g chicken breast\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/nutrition/analyze",
+              "host": ["{{baseUrl}}"],
+              "path": ["nutrition", "analyze"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get product categories",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/products/categories?page=1&limit=50",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "categories"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "50" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get products by category",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/products/category/snacks?page=1&limit=24",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "category", "snacks"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "24" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/products/search?q=nutella",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "search"],
+              "query": [{ "key": "q", "value": "nutella" }]
+            }
+          }
+        },
+        {
+          "name": "Get product by barcode",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/products/barcode/3017620422003",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "barcode", "3017620422003"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
