@@ -108,10 +108,11 @@ function badge(text, colors) {
   return `<span class="px-2 py-1 ${colors} text-xs font-semibold rounded-full">${escapeHtml(text)}</span>`;
 }
 
-export function recipeCard(meal, listView = false) {
+export function recipeCard(meal, listView = false, favorite = false) {
   const description = meal.instructions?.[0] || "Delicious recipe to try!";
   const layout = listView ? "flex" : "";
   const imageBox = listView ? "w-48 shrink-0" : "h-48";
+  const heart = favorite ? "fa-solid fa-heart text-red-500" : "fa-regular fa-heart text-gray-400";
 
   return `
     <div class="recipe-card bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer group ${layout}"
@@ -119,6 +120,10 @@ export function recipeCard(meal, listView = false) {
       <div class="relative ${imageBox} overflow-hidden">
         <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           src="${escapeHtml(meal.thumbnail)}" alt="${escapeHtml(meal.name)}" loading="lazy" />
+        <button class="favorite-btn absolute top-2 right-2 w-9 h-9 rounded-full bg-white/90 shadow-sm flex items-center justify-center hover:text-red-500"
+          data-meal-id="${escapeHtml(meal.id)}" title="${favorite ? "Remove from Favorites" : "Add to Favorites"}">
+          <i class="${heart}"></i>
+        </button>
         <div class="absolute bottom-3 left-3 flex gap-2">
           ${badge(meal.category, "bg-white/90 backdrop-blur-sm text-gray-700")}
           ${badge(meal.area, "bg-emerald-500 text-white")}
@@ -216,7 +221,17 @@ function videoSection(youtubeUrl) {
   );
 }
 
-export function mealDetails(meal) {
+export function favoriteMealButton(favorite) {
+  const colors = favorite ? "bg-red-500 text-white hover:bg-red-700" : "bg-red-50 text-red-600 hover:bg-red-200";
+  return `
+    <button id="favorite-meal-btn"
+      class="flex items-center gap-2 px-6 py-3 ${colors} rounded-xl font-semibold transition-all">
+      <i class="${favorite ? "fa-solid" : "fa-regular"} fa-heart"></i>
+      <span>${favorite ? "Saved to Favorites" : "Add to Favorites"}</span>
+    </button>`;
+}
+
+export function mealDetails(meal, favorite = false) {
   const ingredientsCount = `<span class="text-sm font-normal text-gray-500 ml-auto">${meal.ingredients.length} items</span>`;
 
   return `
@@ -250,6 +265,7 @@ export function mealDetails(meal) {
         <i class="fa-solid fa-clipboard-list"></i>
         <span>Log This Meal</span>
       </button>
+      <div id="favorite-meal-wrapper">${favoriteMealButton(favorite)}</div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">

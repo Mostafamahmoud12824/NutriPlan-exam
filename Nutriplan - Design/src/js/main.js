@@ -1,5 +1,6 @@
 import * as api from "./api/nutriplan.js";
 import * as foodLog from "./state/foodlog.js";
+import * as favorites from "./state/favorites.js";
 import * as ui from "./ui/components.js";
 
 const $ = (selector) => document.querySelector(selector);
@@ -18,6 +19,7 @@ const state = {
   productGrade: "",
   productsDescription: "",
   listView: false,
+  showFavorites: false,
   showAllCategories: false,
   currentMealId: null,
   currentMeal: null,
@@ -214,6 +216,17 @@ function renderMeals() {
   grid.classList.toggle("grid-cols-4", !state.listView);
   grid.classList.toggle("grid-cols-1", state.listView);
 
+  const savedMeals = favorites.getFavorites();
+  const savedIds = savedMeals.map((meal) => meal.id);
+
+  if (state.showFavorites) {
+    $("#recipes-count").textContent = `Showing ${savedMeals.length} favorite recipes`;
+    grid.innerHTML = savedMeals.length
+      ? savedMeals.map((meal) => ui.recipeCard(meal, state.listView, true)).join("")
+      : ui.emptyState("No favorites yet", "Tap the heart on any recipe to save it here", "fa-heart");
+    return;
+  }
+
   const filters = [state.activeCategory, state.activeArea].filter(Boolean).join(" · ");
   let label = `Showing ${state.meals.length} recipes`;
   if (state.query) label += ` for "${state.query}"`;
@@ -221,8 +234,25 @@ function renderMeals() {
   $("#recipes-count").textContent = label;
 
   grid.innerHTML = state.meals.length
-    ? state.meals.map((meal) => ui.recipeCard(meal, state.listView)).join("")
+    ? state.meals.map((meal) => ui.recipeCard(meal, state.listView, savedIds.includes(meal.id))).join("")
     : ui.emptyState();
+}
+
+function toggleFavoritesView() {
+  state.showFavorites = !state.showFavorites;
+  const button = $("#favorites-btn");
+  button.classList.toggle("bg-red-500", state.showFavorites);
+  button.classList.toggle("text-white", state.showFavorites);
+  button.classList.toggle("bg-gray-200", !state.showFavorites);
+  button.classList.toggle("text-gray-700", !state.showFavorites);
+  button.innerHTML = `<i class="${state.showFavorites ? "fa-solid" : "fa-regular"} fa-heart"></i><span>Favorites</span>`;
+  renderMeals();
+}
+
+function toggleFavorite(meal) {
+  const saved = favorites.toggleFavorite(meal);
+  toast(saved ? "Added to favorites" : "Removed from favorites");
+  return saved;
 }
 
 function styleViewButton(selector, active) {
@@ -257,7 +287,7 @@ async function openMeal(id) {
     if (!meal) throw new Error("Recipe not found");
 
     state.currentMeal = meal;
-    container.innerHTML = ui.mealDetails(meal);
+    container.innerHTML = ui.mealDetails(meal, favorites.isFavorite(meal.id));
     analyzeMeal(meal);
   } catch (error) {
     if (state.currentMealId !== id) return;
@@ -616,15 +646,29 @@ function bindEvents() {
   });
 
   $("#recipes-grid").addEventListener("click", (event) => {
+    const heart = event.target.closest(".favorite-btn");
+    if (heart) {
+      const id = heart.dataset.mealId;
+      const meal = state.meals.find((m) => m.id === id) || favorites.getFavorites().find((m) => m.id === id);
+      toggleFavorite(meal);
+      renderMeals();
+      return;
+    }
     const card = event.target.closest(".recipe-card");
     if (card) navigate(`meal?id=${encodeURIComponent(card.dataset.mealId)}`);
   });
 
+  $("#favorites-btn").addEventListener("click", toggleFavoritesView);
   $("#grid-view-btn").addEventListener("click", () => setViewMode(false));
   $("#list-view-btn").addEventListener("click", () => setViewMode(true));
   $("#meal-details").addEventListener("click", (event) => {
     if (event.target.closest("#back-to-meals-btn")) navigate("meals");
     else if (event.target.closest("#log-meal-btn")) logCurrentMeal();
+    else if (event.target.closest("#favorite-meal-btn") && state.currentMeal) {
+      const saved = toggleFavorite(state.currentMeal);
+      $("#favorite-meal-wrapper").innerHTML = ui.favoriteMealButton(saved);
+      renderMeals();
+    }
     else if (event.target.closest("#retry-analysis-btn")) retryAnalysis();
     else if (event.target.closest("#set-usda-key-btn")) promptUsdaKey();
   });

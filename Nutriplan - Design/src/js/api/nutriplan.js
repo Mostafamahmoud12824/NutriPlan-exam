@@ -33,7 +33,7 @@ async function request(path, { params, ...options } = {}) {
   if (isGet && cache[url]) return cache[url];
 
   const response = await fetch(url, options);
-  const data = await response.json().catch(() => null);
+  const data = await response.json();
 
   if (!response.ok) {
     const message =
